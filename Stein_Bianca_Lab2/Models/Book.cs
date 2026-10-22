@@ -17,5 +17,6 @@ namespace Stein_Bianca_Lab2.Models
         public Publisher? Publisher { get; set; }
         public int? AuthorID { get; set; }
         public Authors? Author { get; set; }
+        public ICollection<BookCategory>? BookCategories { get; set; }
     }
 }
