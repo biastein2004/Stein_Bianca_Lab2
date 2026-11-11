@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Stein_Bianca_Lab2.Models;
 
 namespace Stein_Bianca_Lab2.Pages.Books;
 
+[Authorize(Roles = "Admin")]
 public class EditModel : BookCategoriesPageModel
 {
     private readonly Stein_Bianca_Lab2Context _context;
@@ -48,8 +50,6 @@ public class EditModel : BookCategoriesPageModel
         }
         Book = book;
 
-        //apelam PopulateAssignedCategoryData pentru a obtine informatiile necesare checkbox-urilor
-        //folosind clasa AssignedCategoryData
         PopulateAssignedCategoryData(_context, Book);
 
         FillLists();
@@ -86,8 +86,6 @@ public class EditModel : BookCategoriesPageModel
             return RedirectToPage("./Index");
         }
 
-        //Apelam UpdateBookCategories pentru a aplica informatiile din checkbox-uri la entitatea Books
-        //care este editata
         UpdateBookCategories(_context, selectedCategories, bookToUpdate);
         PopulateAssignedCategoryData(_context, bookToUpdate);
         Book = bookToUpdate;

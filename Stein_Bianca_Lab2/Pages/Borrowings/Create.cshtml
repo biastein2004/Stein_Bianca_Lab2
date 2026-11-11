@@ -14,24 +14,14 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Borrowing.MemberID" class="control-label"></label>
-                <input asp-for="Borrowing.MemberID" class="form-control" />
+                <label asp-for="Borrowing.MemberID" class="control-label">Member</label>
+                <select asp-for="Borrowing.MemberID" class="form-control" asp-items="ViewBag.MemberID"></select>
                 <span asp-validation-for="Borrowing.MemberID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Borrowing.Member" class="control-label"></label>
-                <input asp-for="Borrowing.Member" class="form-control" />
-                <span asp-validation-for="Borrowing.Member" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Borrowing.BookID" class="control-label"></label>
-                <input asp-for="Borrowing.BookID" class="form-control" />
+                <label asp-for="Borrowing.BookID" class="control-label">Book</label>
+                <select asp-for="Borrowing.BookID" class="form-control" asp-items="ViewBag.BookID"></select>
                 <span asp-validation-for="Borrowing.BookID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Borrowing.Book" class="control-label"></label>
-                <input asp-for="Borrowing.Book" class="form-control" />
-                <span asp-validation-for="Borrowing.Book" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Borrowing.ReturnDate" class="control-label"></label>
@@ -46,9 +36,11 @@
 </div>
 
 <div>
-    <a asp-page="./Index">Back to List</a>
+    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

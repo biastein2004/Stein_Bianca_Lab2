@@ -15,33 +15,37 @@ public class CreateModel : PageModel
         _context = context;
     }
 
-    public IActionResult OnGet()
-    {
-        var bookList = _context.Book
-               .Include(b => b.Author)
-               .Select(x => new
-               {
-                   x.ID,
-                   BookFullName = x.Title + " - " + x.Author.LastName + " " +
-x.Author.FirstName
-               });
-
-
-        ViewData["BookID"] = new SelectList(bookList, "ID",
-"BookFullName");
-        ViewData["MemberID"] = new SelectList(_context.Member, "ID",
-"FullName");
-        return Page();
-    }
-
     [BindProperty]
     public Borrowing Borrowing { get; set; } = default!;
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD.
+    private void FillLists()
+    {
+        var members = _context.Member.OrderBy(m => m.LastName).ToList();
+        ViewData["MemberID"] = new SelectList(
+            members.Select(m => new { m.ID, FullName = m.FullName }),
+            "ID", "FullName");
+
+        var books = _context.Book.Include(b => b.Author).OrderBy(b => b.Title).ToList();
+        ViewData["BookID"] = new SelectList(
+            books.Select(b => new
+            {
+                b.ID,
+                BookDetails = b.Title + " - " + (b.Author != null ? b.Author.FullName : "")
+            }),
+            "ID", "BookDetails");
+    }
+
+    public IActionResult OnGet()
+    {
+        FillLists();
+        return Page();
+    }
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
+            FillLists();
             return Page();
         }
 

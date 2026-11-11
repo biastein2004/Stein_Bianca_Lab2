@@ -4,6 +4,12 @@
 @{
     ViewData["Title"] = "Books";
 }
+builder.Services.AddRazorPages(options =>
+{
+options.Conventions.AuthorizeFolder("/Books");
+options.Conventions.AllowAnonymousToPage("/Books/Index");
+options.Conventions.AllowAnonymousToPage("/Books/Details");
+});
 
 <h1>Index</h1>
 

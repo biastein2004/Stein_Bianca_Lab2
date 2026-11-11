@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\" />
     <Folder Include="Pages\AuthorsPages\" />
     <Folder Include="Pages\CategoryPages\" />
   </ItemGroup>

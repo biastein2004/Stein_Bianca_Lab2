@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,42 +18,37 @@ public class EditModel : PageModel
     [BindProperty]
     public Borrowing Borrowing { get; set; } = default!;
 
-    public SelectList MemberID { get; set; } = default!;
-    public SelectList BookID { get; set; } = default!;
-
-    private void PopulateDropDownLists()
+    private void FillLists()
     {
-        MemberID = new SelectList(
-            _context.Member,
-            "ID",
-            "FullName"
-        );
+        var members = _context.Member.OrderBy(m => m.LastName).ToList();
+        ViewData["MemberID"] = new SelectList(
+            members.Select(m => new { m.ID, FullName = m.FullName }),
+            "ID", "FullName");
 
-        BookID = new SelectList(
-            _context.Book,
-            "ID",
-            "Title"
-        );
+        var books = _context.Book.Include(b => b.Author).OrderBy(b => b.Title).ToList();
+        ViewData["BookID"] = new SelectList(
+            books.Select(b => new
+            {
+                b.ID,
+                BookDetails = b.Title + " - " + (b.Author != null ? b.Author.FullName : "")
+            }),
+            "ID", "BookDetails");
     }
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
-        if (id is null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var borrowing = await _context.Borrowing
-            .FirstOrDefaultAsync(m => m.ID == id);
-
-        if (borrowing is null)
+        var borrowing = await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
+        if (borrowing == null)
         {
             return NotFound();
         }
-
         Borrowing = borrowing;
-        PopulateDropDownLists();
-
+        FillLists();
         return Page();
     }
 
@@ -62,7 +56,7 @@ public class EditModel : PageModel
     {
         if (!ModelState.IsValid)
         {
-            PopulateDropDownLists();
+            FillLists();
             return Page();
         }
 
@@ -74,7 +68,7 @@ public class EditModel : PageModel
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BorrowingExists(Borrowing.ID))
+            if (!_context.Borrowing.Any(e => e.ID == Borrowing.ID))
             {
                 return NotFound();
             }
@@ -85,10 +79,5 @@ public class EditModel : PageModel
         }
 
         return RedirectToPage("./Index");
-    }
-
-    private bool BorrowingExists(int id)
-    {
-        return _context.Borrowing.Any(e => e.ID == id);
     }
 }
